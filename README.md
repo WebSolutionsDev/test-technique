@@ -9,7 +9,7 @@ Outil de gestion d'un catalogue avec des produits et des catégories.
 | Domaine | Stack |
 |---|---|
 | API | Laravel (PHP 8.4), Sail (Docker), MySQL |
-| Front | Vue 3 (Composition API), Vite, Element Plus, Axios |
+| Front | Vue 3 (Option API), Vite, Element Plus, Axios |
 
 ## Structure du dépôt
 
