@@ -1,5 +1,97 @@
 @import './base.css';
 
+:root {
+  color-scheme: light;
+  font-family: 'Glacial Indifference', 'Trebuchet MS', Arial, sans-serif;
+  color: #343232;
+  background: #f1e9e2;
+
+  --el-color-primary: #8a5b3e;
+  --el-color-primary-light-3: #b49786;
+  --el-color-primary-light-5: #d0b5a3;
+  --el-color-primary-light-7: #e4d3c7;
+  --el-color-primary-light-8: #eee2d8;
+  --el-color-primary-light-9: #faf5f0;
+  --el-color-primary-dark-2: #6f4932;
+  --el-border-radius-base: 8px;
+  --el-text-color-primary: #343232;
+  --el-text-color-regular: #343232;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  color: #343232;
+  background: #f1e9e2;
+  font-family: 'Glacial Indifference', 'Trebuchet MS', Arial, sans-serif;
+}
+
 #app {
   width: 100%;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  font-weight: normal;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.el-button,
+.el-input__inner,
+.el-select,
+.el-textarea__inner {
+  font-family: inherit;
+}
+
+.el-button {
+  font-weight: 700;
+}
+
+.el-dialog,
+.el-message-box {
+  border: 1px solid #e4d8ce;
+  border-radius: 16px;
+  background: #fff;
+  color: #343232;
+  box-shadow: 0 12px 40px rgba(180, 151, 134, 0.2);
+}
+
+.el-dialog__title,
+.el-message-box__title {
+  color: #343232;
+  font-weight: 800;
+}
+
+.el-form-item__label {
+  color: #343232;
+  font-weight: 700;
+}
+
+.el-input__wrapper,
+.el-select__wrapper {
+  background: #fff;
+}
+
+.el-message-box .el-button--primary {
+  --el-color-primary: #343232;
+  --el-color-primary-dark-2: #272525;
+}
+
+.el-dialog .form-actions .el-button--primary {
+  color: #343232 !important;
+  background: #ff914d !important;
+  border-color: #ff914d !important;
+}
+
+.el-dialog .form-actions .el-button--primary:hover:not(:disabled),
+.el-dialog .form-actions .el-button--primary:focus-visible:not(:disabled) {
+  color: #343232 !important;
+  background: #ed803d !important;
+  border-color: #ed803d !important;
+}
+
+.el-dialog .form-actions .el-button--primary:disabled {
+  opacity: 0.5;
 }
