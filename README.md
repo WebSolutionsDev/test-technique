@@ -1,68 +1,116 @@
-# Test technique - Gestion de catalogue produit
+# Gestion de catalogue produits
 
-## Projet
+Application de gestion d’un catalogue de produits et de catégories, réalisée avec Laravel, MySQL et Vue 3
 
-Outil de gestion d'un catalogue avec des produits et des catégories.
+## Fonctionnalités réalisées
 
-## Stack imposée
+- Liste des produits avec leur catégorie, prix et stock
+- Pagination de 10 produits par page
+- Recherche par nom
+- Création d’un produit
+- Modification d’un produit
+- Suppression avec confirmation demandé
+- Validation des champs et affichage des erreurs
+- Gestion des états de chargement et possibilité de réessayer après une erreur
+- Interface adaptée aux petits écrans
 
-| Domaine | Stack |
-|---|---|
-| API | Laravel (PHP 8.4), Sail (Docker), MySQL |
-| Front | Vue 3 (Option API), Vite, Element Plus, Axios |
+## Stack et choix techniques
 
-## Structure du dépôt
+- API Laravel et base de données MySQL, exécutées avec Sail
+- Front Vue 3 en Options API, avec Vite, Element Plus et Axios
+- Relation entre les produits et les catégories via Eloquent
+- Référence/SKU unique, contrôlée par la validation et une contrainte en base
+- Prix stocké en `decimal(10, 2)` pour éviter les imprécisions des nombres flottants en base. Il doit être compris entre 0,01 et 99 999 999,99 €, avec deux décimales maximum
+- Validation côté front pour guider la saisie, et côté API pour garantir la validité des données
+- Formulaire partagé entre la création et la modification
+- Chargement des catégories avec les produits pour éviter une requête supplémentaire par ligne
+- Le stock doit être un entier positif ou nul
 
+### Prérequis pour installation
+
+- Docker et Docker Compose (Docker Desktop avec WSL2 sous Windows)
+- PHP et Composer pour installer les dépendances de l’API, ou un environnement Docker compatible permettant cette installation
+- Node.js compatible avec le projet : `^22.18.0` ou `>=24.12.0`
+- npm
+
+### API
+
+Depuis la racine du projet :
+
+```bash
+cd api
+composer install
+cp .env.example .env
+./vendor/bin/sail up -d
+./vendor/bin/sail artisan key:generate
+./vendor/bin/sail artisan migrate --seed
 ```
-test-technique/
-├── api/     → Laravel + Sail
-├── front/   → Vue 3 + Element Plus
-└── README.md
+
+Attendre que MySQL soit prêt avant d’exécuter les migrations.
+
+L’API est accessible sur `http://localhost:8000/api`.
+
+Les catégories Informatique, Maison et Loisirs sont ajoutées par le seeder. 
+Le catalogue est initialement vide : les produits peuvent être créés depuis l’interface.
+
+### Front
+
+Dans un second terminal, depuis la racine du projet :
+
+```bash
+cd front
+npm ci
+npm run dev
 ```
 
-## Initialisation
+L’interface est accessible sur `http://localhost:5173`.
 
-- API : `./vendor/bin/sail up -d`. `http://localhost:8000`.
-- Front : `npm install`, `npm run dev`. `http://localhost:5173`.
+Par défaut, le front appelle `http://localhost:8000/api`. 
+Cette adresse peut être remplacée avec la variable `VITE_API_URL` dans un fichier `front/.env`, puis en redémarrant Vite.
 
-Route de test : `GET /api/ping` → `{"status":"ok"}`.
+Le port 5173 est réservé au front Vue : son exposition a été retirée du fichier Compose de l’API pour éviter un conflit.
 
-## Exercice
+### Arrêt
 
-### Modèle de données
+Arrêter le front avec `Ctrl+C`, puis depuis le dossier `api` :
 
-Mettez en place au minimum :
+```bash
+./vendor/bin/sail down
+```
 
-- **Catégorie** : nom.
-- **Produit** : nom, référence/SKU (unique), prix, quantité en stock, catégorie associée (relation).
+## Routes API
 
-Le détail des colonnes/contraintes vous appartient.
+| Méthode | Route | Fonction |
+| --- | --- | --- |
+| GET | `/api/ping` | Vérification de disponibilité |
+| GET | `/api/categories` | Liste des catégories |
+| GET | `/api/products` | Liste paginée des produits |
+| GET | `/api/products/{product}` | Détail d’un produit |
+| POST | `/api/products` | Création d’un produit |
+| PATCH | `/api/products/{product}` | Modification d’un produit |
+| DELETE | `/api/products/{product}` | Suppression d’un produit |
 
-### API à développer
+La liste accepte les paramètres `search` et `page`.
 
-Exposez une API REST sous `/api` permettant de gérer les produits et de lister les catégories :
+## Vérifications
 
-- `GET /api/products` - liste paginée, avec recherche par nom (autres critères de filtrage possibles).
-- `GET /api/products/{id}` - détail d'un produit.
-- `POST /api/products` - création.
-- `DELETE /api/products/{id}` - suppression.
-- `GET /api/categories` - liste des catégories (pas besoin de gérer leur création).
-- **Bonus** : `PUT/PATCH /api/products/{id}` - mise à jour.
+Le build du front et ESLint ont été exécutés avec succès. 
+La modification d’un produit a également été vérifiée manuellement dans l’interface, avec contrôle de la sauvegarde après actualisation.
 
-### Front à développer
+Depuis le dossier `front` :
 
-En utilisant Element Plus, construisez les écrans permettant de :
+```bash
+npm run build
+npx eslint .
+```
 
-- Lister les produits.
-- Créer un produit.
-- Supprimer un produit.
-- **Bonus** : éditer un produit.
+Les tests présents dans l’API sont ceux du squelette Laravel. 
+Aucun test automatisé spécifique au catalogue n’a encore été ajouté.
 
-## Livrable
+## Améliorations envisagées
 
-- Le dépôt GitHub.
-- Un court README expliquant vos choix techniques, ce qui est fait/pas fait, et comment lancer le projet si vous avez modifié la procédure de démarrage.
+Avec davantage de temps :
 
-## Temps indicatif
-
-Comptez environ 2 à 3 heures. Il n'est pas nécessaire de tout terminer : privilégiez la qualité de ce que vous livrez à l'exhaustivité, et indiquez dans votre README ce que vous auriez fait avec plus de temps.
+- Ajouter des tests automatisés de l’API, notamment pour la validation, l’unicité du SKU et la pagination
+- Ajouter des filtres par catégorie et un tri des produits
+- Optimiser le chargement d’Element Plus pour réduire la taille du bundle
